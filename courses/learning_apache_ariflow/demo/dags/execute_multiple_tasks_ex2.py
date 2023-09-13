@@ -27,13 +27,13 @@ with DAG(
     # Define task_b which will execute task_b.sh
     task_b = BashOperator(
         task_id='task_b',
-        bash_command='task_b.sh'
+        bash_command='task_b1.sh'
     )
 
     # Define task_c which will execute task_c.sh
     task_c = BashOperator(
         task_id='task_c',
-        bash_command='task_c.sh'
+        bash_command='task_c1.sh'
     )
 
     # Define task_d which will execute task_d.sh
