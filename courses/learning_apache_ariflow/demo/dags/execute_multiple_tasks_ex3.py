@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import datetime, timedelta
 from airflow.utils.dates import days_ago
 from airflow import DAG
 from airflow.operators.bash import BashOperator
@@ -10,7 +10,7 @@ default_args = {
 
 # Start defining the DAG
 with DAG(
-        dag_id='executing_multiple_tasks_ex2',
+        dag_id='executing_multiple_tasks_ex3',
         description='Dag with multiple tasks and depends',
         default_args=default_args,
         start_date=days_ago(1),
@@ -42,30 +42,40 @@ with DAG(
         bash_command='task_d.sh'
     )
 
-# Define task dependencies using different ways:
+    # Define task_e which will execute task_e.sh
+    task_e = BashOperator(
+        task_id='task_e',
+        bash_command='task_e.sh'
+    )
 
-# Way 1: task_a triggers both task_b and task_c. Once both task_b and task_c finish, task_d triggers.
-task_a >> [task_b, task_c]
-task_d << [task_b, task_c]
+    # Define task_f which will execute task_f.sh
+    task_f = BashOperator(
+        task_id='task_f',
+        bash_command='task_f.sh'
+    )
 
-# Way 2 (Alternative method to Way 1):
-# task_a >> task_b
-# task_a >> task_c
-# task_d << task_b
-# task_d << task_c
+    # Define task_g which will execute task_g.sh
+    task_g = BashOperator(
+        task_id='task_g',
+        bash_command='task_g.sh'
+    )
 
-# Way 3 (Another alternative method):
-# a --> b,c (b and c will trigger only if a succeeded)
-# task_a.set_downstream(task_b)
-# task_a.set_downstream(task_c)
-# b,c --> d (d will trigger only if b and c succeeded)
-# task_d.set_upstream(task_b)
-# task_d.set_upstream(task_c)
+# Define task dependencies
+
+# task_a runs before task_b, which runs before task_e
+task_a >> task_b >> task_e
+
+# task_a runs before task_c, which runs before task_f
+task_a >> task_c >> task_f
+
+# task_a runs before task_d, which runs before task_g
+task_a >> task_d >> task_g
 
 # Flow:
 #
-#    task_a
-#    /     \
-#  task_b  task_c
-#    \     /
-#    task_d
+#   task_a
+#   /  |  \
+#  /   |   \
+# b    c    d
+# |    |    |
+# e    f    g
