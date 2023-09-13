@@ -13,43 +13,27 @@ with DAG(
         default_args=default_args,
         start_date=days_ago(1),
         schedule_interval=timedelta(days=1),
-        tags=['upstream', 'downstream']
+        tags=['scripts', 'template_search'],
+        template_searchpath="/opt/airflow/dags/bash_scripts/"
 ) as dag:
     task_a = BashOperator(
         task_id='task_a',
-        bash_command='''
-            echo Task A has started!
-            
-            for i in {1..10}
-            do
-                echo Task A printing Or Hasson was here $i
-            done
-            
-            echo Task A has ended. B we come!
-        '''
+        bash_command='task_a.sh'
     )
 
     task_b = BashOperator(
         task_id='task_b',
-        bash_command='''
-            echo Task B has started
-            sleep 3
-            echo Task B has ended. C we come!
-        '''
+        bash_command='task_b.sh'
     )
 
     task_c = BashOperator(
         task_id='task_c',
-        bash_command='''
-             echo Task C has started
-             sleep 5
-             echo Task C has ended. D we come!
-         '''
+        bash_command='task_c.sh'
     )
 
     task_d = BashOperator(
         task_id='task_d',
-        bash_command='echo Task D completed. Cheers!'
+        bash_command='task_d.sh'
     )
 
 # Way 1:
