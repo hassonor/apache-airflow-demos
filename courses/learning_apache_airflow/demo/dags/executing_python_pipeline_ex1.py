@@ -85,3 +85,13 @@ with DAG(
 
     # Set the task execution order
     read_csv_file_task >> remove_null_values_task >> [group_by_smoker_task, group_by_region_task]
+
+# read_csv_file_task
+#        |
+#        V
+# remove_null_values_task
+#        |
+#        |-------------------------|
+#        |                        |
+#        V                        V
+# group_by_smoker_task   group_by_region_task
