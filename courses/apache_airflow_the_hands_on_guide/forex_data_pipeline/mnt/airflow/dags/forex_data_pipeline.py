@@ -30,7 +30,7 @@ with DAG(
     is_forex_rates_available_task = HttpSensor(
         task_id="is_forex_rates_available_task",
         http_conn_id="forex_api",
-        endpoint="marclamberti/f45f872dea4dfd3eaa015a4a1af4b39b",
+        endpoint="hassonor/6213b86d299beb5ea67ed5d753146f7f",
         response_check=lambda responses: "rates" in responses.text,
         poke_interval=5,
         timeout=25
