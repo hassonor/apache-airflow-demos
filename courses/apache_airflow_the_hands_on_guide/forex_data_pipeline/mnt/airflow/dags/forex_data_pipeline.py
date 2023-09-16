@@ -130,10 +130,10 @@ with DAG(
         python_callable=download_rates,
     )
 
-    saving_rates_task = BashOperator(
-        task_id="saving_rates_task",
+    saving_rates_json_on_hdfs_task = BashOperator(
+        task_id="saving_rates_json_on_hdfs_task",
         bash_command='save_rates_on_hdfs.sh'
     )
 
     [create_or_verify_http_conn_task,
-     create_or_verify_file_conn_task] >> is_forex_rates_available_task >> download_rates_task >> saving_rates_task
+     create_or_verify_file_conn_task] >> is_forex_rates_available_task >> download_rates_task >> saving_rates_json_on_hdfs_task
