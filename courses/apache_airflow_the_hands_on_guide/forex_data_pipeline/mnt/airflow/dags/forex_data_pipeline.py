@@ -92,4 +92,4 @@ with DAG(
 
     [create_or_verify_http_conn_task,
      create_or_verify_file_conn_task,
-     create_or_verify_hive_conn_task] >> is_forex_rates_available_task >> download_rates_task >> saving_rates_json_on_hdfs_task >> creating_forex_rates_table_on_hive_task
+     create_or_verify_hive_conn_task] >> is_forex_rates_available_task >> is_forex_currencies_file_available_task >> download_rates_task >> saving_rates_json_on_hdfs_task >> creating_forex_rates_table_on_hive_task
