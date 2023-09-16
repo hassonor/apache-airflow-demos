@@ -1,4 +1,10 @@
-# Flow Chart of the Forex Data Pipeline
+### How To Run
+
+1. Run the following: `start.sh` bash by `./start.sh`
+2. Login Airflow: Navigate `localhost:9091` airflow;airflow
+3. Login Hue (To watch and query HDFS data): Navigate to `localhost:32762` root;root
+
+### Flow Chart of the Forex Data Pipeline
 
 1. **Check Availability**
     - [ ] Forex Rates

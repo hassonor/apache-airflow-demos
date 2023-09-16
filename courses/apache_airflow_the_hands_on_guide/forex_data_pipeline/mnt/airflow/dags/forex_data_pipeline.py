@@ -7,6 +7,7 @@ from airflow import DAG, settings
 from airflow.providers.http.sensors.http import HttpSensor
 from airflow.sensors.filesystem import FileSensor
 from airflow.operators.python import PythonOperator
+from airflow.operators.bash import BashOperator
 from airflow.models import Connection
 
 
@@ -84,6 +85,7 @@ with DAG(
         start_date=datetime(2023, 9, 15),
         schedule_interval="@daily",
         default_args=default_args,
+        template_searchpath="/opt/airflow/dags/bash_scripts/",
         catchup=False
 ) as dag:
     create_or_verify_http_conn_task = PythonOperator(
@@ -128,5 +130,10 @@ with DAG(
         python_callable=download_rates,
     )
 
+    saving_rates_task = BashOperator(
+        task_id="saving_rates_task",
+        bash_command='save_rates_on_hdfs.sh'
+    )
+
     [create_or_verify_http_conn_task,
-     create_or_verify_file_conn_task] >> is_forex_rates_available_task >> download_rates_task
+     create_or_verify_file_conn_task] >> is_forex_rates_available_task >> download_rates_task >> saving_rates_task
