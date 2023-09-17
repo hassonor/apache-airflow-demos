@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
-from utils.create_connections import create_or_verify_http_conn, create_or_verify_file_conn, create_or_verify_hive_conn
+from utils.create_connections import create_or_verify_http_conn, create_or_verify_file_conn, create_or_verify_hive_conn, \
+    create_or_verify_spark_conn
 from utils.data_download import download_rates
 
 from airflow import DAG
@@ -8,6 +9,7 @@ from airflow.sensors.filesystem import FileSensor
 from airflow.operators.python import PythonOperator
 from airflow.operators.bash import BashOperator
 from airflow.providers.apache.hive.operators.hive import HiveOperator
+from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOperator
 
 default_args = {
     "owner": "airflow",
@@ -39,6 +41,11 @@ with DAG(
     create_or_verify_hive_conn_task = PythonOperator(
         task_id="create_or_verify_hive_conn_task",
         python_callable=create_or_verify_hive_conn,
+    )
+
+    create_or_verify_spark_conn_task = PythonOperator(
+        task_id="create_or_verify_spark_conn_task",
+        python_callable=create_or_verify_spark_conn,
     )
 
     is_forex_rates_available_task = HttpSensor(
@@ -90,6 +97,65 @@ with DAG(
         """
     )
 
-    [create_or_verify_http_conn_task,
-     create_or_verify_file_conn_task,
-     create_or_verify_hive_conn_task] >> is_forex_rates_available_task >> is_forex_currencies_file_available_task >> download_rates_task >> saving_rates_json_on_hdfs_task >> creating_forex_rates_table_on_hive_task
+    forex_processing_with_spark = SparkSubmitOperator(
+        task_id="forex_processing_with_spark",
+        conn_id="spark_conn",
+        application="/opt/airflow/dags/scripts/forex_processing.py",
+        verbose=False
+    )
+
+    [
+        create_or_verify_http_conn_task,
+        create_or_verify_file_conn_task,
+        create_or_verify_hive_conn_task,
+        create_or_verify_spark_conn_task
+    ] >> is_forex_rates_available_task
+
+    is_forex_rates_available_task >> is_forex_currencies_file_available_task
+
+    is_forex_currencies_file_available_task >> download_rates_task
+
+    download_rates_task >> saving_rates_json_on_hdfs_task
+
+    saving_rates_json_on_hdfs_task >> creating_forex_rates_table_on_hive_task
+
+    creating_forex_rates_table_on_hive_task >> forex_processing_with_spark
+
+# DAG Flow:
+#
+# +----------------------------------------+
+# | create_or_verify_http_conn_task        |
+# | create_or_verify_file_conn_task        |
+# | create_or_verify_hive_conn_task        |
+# | create_or_verify_spark_conn_task       |
+# +----------------------------------------+
+#                     |
+#                     v
+# +----------------------------------------+
+# | is_forex_rates_available_task          |
+# +----------------------------------------+
+#                     |
+#                     v
+# +----------------------------------------+
+# | is_forex_currencies_file_available_task|
+# +----------------------------------------+
+#                     |
+#                     v
+# +----------------------------------------+
+# | download_rates_task                    |
+# +----------------------------------------+
+#                     |
+#                     v
+# +----------------------------------------+
+# | saving_rates_json_on_hdfs_task         |
+# +----------------------------------------+
+#                     |
+#                     v
+# +----------------------------------------+
+# | creating_forex_rates_table_on_hive_task|
+# +----------------------------------------+
+#                     |
+#                     v
+# +----------------------------------------+
+# | forex_processing_with_spark            |
+# +----------------------------------------+

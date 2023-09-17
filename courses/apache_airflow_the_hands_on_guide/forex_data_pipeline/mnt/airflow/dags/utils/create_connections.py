@@ -10,6 +10,8 @@ DEFAULT_HIVE_HOST = 'hive-server'
 DEFAULT_HIVE_LOGIN = 'hive'
 DEFAULT_HIVE_PASSWORD = 'hive'
 DEFAULT_HIVE_PORT = 10000
+DEFAULT_SPARK_HOST = "spark://spark-master"
+DEFAULT_SPARK_PORT = 7077
 
 
 def create_or_verify_hive_conn(**kwargs):
@@ -17,10 +19,10 @@ def create_or_verify_hive_conn(**kwargs):
     dag_run_conf = ti.dag_run.conf if ti and ti.dag_run else {}
 
     conn_id = dag_run_conf.get('hive_conn_id', "hive_conn")
-    host = dag_run_conf.get('hive_host', DEFAULT_HIVE_HOST)
-    login = dag_run_conf.get('hive_login', DEFAULT_HIVE_LOGIN)
-    password = dag_run_conf.get('hive_password', DEFAULT_HIVE_PASSWORD)
-    port = dag_run_conf.get('hive_port', DEFAULT_HIVE_PORT)
+    host = dag_run_conf.get('hive_conn_host', DEFAULT_HIVE_HOST)
+    login = dag_run_conf.get('hive_conn_login', DEFAULT_HIVE_LOGIN)
+    password = dag_run_conf.get('hive_conn_password', DEFAULT_HIVE_PASSWORD)
+    port = dag_run_conf.get('hive_conn_port', DEFAULT_HIVE_PORT)
 
     with settings.Session() as session:
         existing_conn = session.query(Connection).filter(Connection.conn_id == conn_id).first()
@@ -42,7 +44,7 @@ def create_or_verify_http_conn(**kwargs):
     dag_run_conf = ti.dag_run.conf if ti and ti.dag_run else {}
 
     conn_id = dag_run_conf.get('http_conn_id', "forex_api_conn")
-    host = dag_run_conf.get('host', DEFAULT_HOST)
+    host = dag_run_conf.get('http_conn_host', DEFAULT_HOST)
 
     with settings.Session() as session:
         existing_conn = session.query(Connection).filter(Connection.conn_id == conn_id).first()
@@ -61,7 +63,7 @@ def create_or_verify_file_conn(**kwargs):
     dag_run_conf = ti.dag_run.conf if ti and ti.dag_run else {}
 
     conn_id = dag_run_conf.get('file_conn_id', "forex_path_conn")
-    path = dag_run_conf.get('path', DEFAULT_PATH)
+    path = dag_run_conf.get('file_conn_path_for_extra', DEFAULT_PATH)
 
     with settings.Session() as session:
         existing_conn = session.query(Connection).filter(Connection.conn_id == conn_id).first()
@@ -70,6 +72,27 @@ def create_or_verify_file_conn(**kwargs):
                 conn_id=conn_id,
                 conn_type="File (path)",
                 extra=json.dumps({"path": path})
+            )
+            session.add(new_conn)
+            session.commit()
+
+
+def create_or_verify_spark_conn(**kwargs):
+    ti = kwargs.get('ti')
+    dag_run_conf = ti.dag_run.conf if ti and ti.dag_run else {}
+
+    conn_id = dag_run_conf.get('spark_conn_id', "spark_conn")
+    host = dag_run_conf.get('spark_conn_host', DEFAULT_SPARK_HOST)
+    port = dag_run_conf.get('spark_conn_port', DEFAULT_SPARK_PORT)
+
+    with settings.Session() as session:
+        existing_conn = session.query(Connection).filter(Connection.conn_id == conn_id).first()
+        if not existing_conn:
+            new_conn = Connection(
+                conn_id=conn_id,
+                conn_type="spark",
+                host=host,
+                port=port
             )
             session.add(new_conn)
             session.commit()
