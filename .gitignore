@@ -1,1 +1,2 @@
 /.idea
+/courses/apache_airflow_the_hands_on_guide/forex_data_pipeline/mnt/airflow/dags/__pycache__/*
