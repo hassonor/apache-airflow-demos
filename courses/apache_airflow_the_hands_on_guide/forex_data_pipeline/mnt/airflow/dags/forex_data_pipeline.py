@@ -8,6 +8,7 @@ from airflow.providers.http.sensors.http import HttpSensor
 from airflow.sensors.filesystem import FileSensor
 from airflow.operators.python import PythonOperator
 from airflow.operators.bash import BashOperator
+from airflow.operators.email import EmailOperator
 from airflow.providers.apache.hive.operators.hive import HiveOperator
 from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOperator
 
@@ -104,6 +105,13 @@ with DAG(
         verbose=False
     )
 
+    sending_email_task = EmailOperator(
+        task_id="sending_email_task",
+        to="hassonor@gmail.com",
+        subject="forex_data_pipeline",
+        html_content="<h4>forex_data_pipeline</h4>"
+    )
+
     [
         create_or_verify_http_conn_task,
         create_or_verify_file_conn_task,
@@ -119,7 +127,7 @@ with DAG(
 
     saving_rates_json_on_hdfs_task >> creating_forex_rates_table_on_hive_task
 
-    creating_forex_rates_table_on_hive_task >> forex_processing_with_spark
+    creating_forex_rates_table_on_hive_task >> forex_processing_with_spark >> sending_email_task
 
 # DAG Flow:
 #
