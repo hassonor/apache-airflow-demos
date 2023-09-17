@@ -3,96 +3,62 @@ from airflow.models import Connection
 import json
 
 # Constants
-DEFAULT_HOST = 'https://gist.github.com/'
-DEFAULT_PATH = '/opt/airflow/dags/files'
-DEFAULT_ENDPOINT = 'hassonor/6213b86d299beb5ea67ed5d753146f7f'
-DEFAULT_HIVE_HOST = 'hive-server'
-DEFAULT_HIVE_LOGIN = 'hive'
-DEFAULT_HIVE_PASSWORD = 'hive'
-DEFAULT_HIVE_PORT = 10000
-DEFAULT_SPARK_HOST = "spark://spark-master"
-DEFAULT_SPARK_PORT = 7077
+DEFAULT_HIVE = {
+    'CONN_ID': 'hive_conn',
+    'HOST': 'hive-server',
+    'LOGIN': 'hive',
+    'PASSWORD': 'hive',
+    'PORT': 10000
+}
+DEFAULT_HTTP = {'CONN_ID': 'forex_api_conn', 'HOST': 'https://gist.github.com/'}
+DEFAULT_FILE = {'CONN_ID': 'forex_path_conn', 'PATH': '/opt/airflow/dags/files'}
+DEFAULT_SPARK = {'CONN_ID': 'spark_conn', 'HOST': 'spark://spark-master', 'PORT': 7077}
+DEFAULT_SLACK = {'CONN_ID': 'slack_conn', 'HOST': 'https://hooks.slack.com/services/',
+                 'PASSWORD': 'TheRestOfTheSlackHost'}
+
+
+def get_connection_parameters(conn_type, default_values, **kwargs):
+    ti = kwargs.get('ti')
+    dag_run_conf = ti.dag_run.conf if ti and ti.dag_run else {}
+    return {key.lower(): dag_run_conf.get(f'{conn_type}_{key.lower()}', value) for key, value in default_values.items()}
+
+
+def create_or_verify_connection(conn_type, params):
+    with settings.Session() as session:
+        existing_conn = session.query(Connection).filter(Connection.conn_id == params['conn_id']).first()
+        if not existing_conn:
+            conn_id = params.pop('conn_id')
+            if 'extra' in params:
+                extra = params.pop('extra')
+                new_conn = Connection(conn_id=conn_id, conn_type=conn_type, extra=json.dumps(extra), **params)
+            else:
+                new_conn = Connection(conn_id=conn_id, conn_type=conn_type, **params)
+            session.add(new_conn)
+            session.commit()
 
 
 def create_or_verify_hive_conn(**kwargs):
-    ti = kwargs.get('ti')
-    dag_run_conf = ti.dag_run.conf if ti and ti.dag_run else {}
-
-    conn_id = dag_run_conf.get('hive_conn_id', "hive_conn")
-    host = dag_run_conf.get('hive_conn_host', DEFAULT_HIVE_HOST)
-    login = dag_run_conf.get('hive_conn_login', DEFAULT_HIVE_LOGIN)
-    password = dag_run_conf.get('hive_conn_password', DEFAULT_HIVE_PASSWORD)
-    port = dag_run_conf.get('hive_conn_port', DEFAULT_HIVE_PORT)
-
-    with settings.Session() as session:
-        existing_conn = session.query(Connection).filter(Connection.conn_id == conn_id).first()
-        if not existing_conn:
-            new_conn = Connection(
-                conn_id=conn_id,
-                conn_type="hiveserver2",
-                host=host,
-                login=login,
-                password=password,
-                port=port
-            )
-            session.add(new_conn)
-            session.commit()
+    params = get_connection_parameters('hive_conn', DEFAULT_HIVE, **kwargs)
+    create_or_verify_connection("hiveserver2", params)
 
 
 def create_or_verify_http_conn(**kwargs):
-    ti = kwargs.get('ti')
-    dag_run_conf = ti.dag_run.conf if ti and ti.dag_run else {}
-
-    conn_id = dag_run_conf.get('http_conn_id', "forex_api_conn")
-    host = dag_run_conf.get('http_conn_host', DEFAULT_HOST)
-
-    with settings.Session() as session:
-        existing_conn = session.query(Connection).filter(Connection.conn_id == conn_id).first()
-        if not existing_conn:
-            new_conn = Connection(
-                conn_id=conn_id,
-                conn_type="HTTP",
-                host=host
-            )
-            session.add(new_conn)
-            session.commit()
+    params = get_connection_parameters('http_conn', DEFAULT_HTTP, **kwargs)
+    create_or_verify_connection("http", params)
 
 
 def create_or_verify_file_conn(**kwargs):
-    ti = kwargs.get('ti')
-    dag_run_conf = ti.dag_run.conf if ti and ti.dag_run else {}
-
-    conn_id = dag_run_conf.get('file_conn_id', "forex_path_conn")
-    path = dag_run_conf.get('file_conn_path_for_extra', DEFAULT_PATH)
-
-    with settings.Session() as session:
-        existing_conn = session.query(Connection).filter(Connection.conn_id == conn_id).first()
-        if not existing_conn:
-            new_conn = Connection(
-                conn_id=conn_id,
-                conn_type="File (path)",
-                extra=json.dumps({"path": path})
-            )
-            session.add(new_conn)
-            session.commit()
+    params = get_connection_parameters('file_conn', DEFAULT_FILE, **kwargs)
+    extra_data = {"path": params.pop('path')}
+    params['extra'] = extra_data
+    create_or_verify_connection("File (path)", params)
 
 
 def create_or_verify_spark_conn(**kwargs):
-    ti = kwargs.get('ti')
-    dag_run_conf = ti.dag_run.conf if ti and ti.dag_run else {}
+    params = get_connection_parameters('spark_conn', DEFAULT_SPARK, **kwargs)
+    create_or_verify_connection("spark", params)
 
-    conn_id = dag_run_conf.get('spark_conn_id', "spark_conn")
-    host = dag_run_conf.get('spark_conn_host', DEFAULT_SPARK_HOST)
-    port = dag_run_conf.get('spark_conn_port', DEFAULT_SPARK_PORT)
 
-    with settings.Session() as session:
-        existing_conn = session.query(Connection).filter(Connection.conn_id == conn_id).first()
-        if not existing_conn:
-            new_conn = Connection(
-                conn_id=conn_id,
-                conn_type="spark",
-                host=host,
-                port=port
-            )
-            session.add(new_conn)
-            session.commit()
+def create_or_verify_slack_conn(**kwargs):
+    params = get_connection_parameters('slack_conn', DEFAULT_SLACK, **kwargs)
+    create_or_verify_connection("http", params)

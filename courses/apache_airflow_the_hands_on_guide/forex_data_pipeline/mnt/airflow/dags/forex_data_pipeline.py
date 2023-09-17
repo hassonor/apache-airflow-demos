@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from utils.create_connections import create_or_verify_http_conn, create_or_verify_file_conn, create_or_verify_hive_conn, \
-    create_or_verify_spark_conn
+    create_or_verify_spark_conn, create_or_verify_slack_conn
 from utils.data_download import download_rates
 
 from airflow import DAG
@@ -11,6 +11,7 @@ from airflow.operators.bash import BashOperator
 from airflow.operators.email import EmailOperator
 from airflow.providers.apache.hive.operators.hive import HiveOperator
 from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOperator
+from airflow.providers.slack.operators.slack_webhook import SlackWebhookOperator
 
 default_args = {
     "owner": "airflow",
@@ -20,6 +21,11 @@ default_args = {
     "retries": 2,
     "retry_delay": timedelta(minutes=4)
 }
+
+
+def _get_message():
+    return "Hi from Or Hasson"
+
 
 with DAG(
         "forex_data_pipeline",
@@ -47,6 +53,11 @@ with DAG(
     create_or_verify_spark_conn_task = PythonOperator(
         task_id="create_or_verify_spark_conn_task",
         python_callable=create_or_verify_spark_conn,
+    )
+
+    create_or_verify_slack_conn_task = PythonOperator(
+        task_id="create_or_verify_slack_conn_task",
+        python_callable=create_or_verify_slack_conn,
     )
 
     is_forex_rates_available_task = HttpSensor(
@@ -105,18 +116,26 @@ with DAG(
         verbose=False
     )
 
-    sending_email_task = EmailOperator(
-        task_id="sending_email_task",
+    send_email_task = EmailOperator(
+        task_id="send_email_task",
         to="hassonor@gmail.com",
         subject="forex_data_pipeline",
         html_content="<h4>forex_data_pipeline</h4>"
+    )
+
+    send_slack_notification_task = SlackWebhookOperator(
+        task_id="send_slack_notification_task",
+        http_conn_id="slack_conn",
+        message=_get_message(),
+        channel="#monitoring"
     )
 
     [
         create_or_verify_http_conn_task,
         create_or_verify_file_conn_task,
         create_or_verify_hive_conn_task,
-        create_or_verify_spark_conn_task
+        create_or_verify_spark_conn_task,
+        create_or_verify_slack_conn_task
     ] >> is_forex_rates_available_task
 
     is_forex_rates_available_task >> is_forex_currencies_file_available_task
@@ -127,7 +146,8 @@ with DAG(
 
     saving_rates_json_on_hdfs_task >> creating_forex_rates_table_on_hive_task
 
-    creating_forex_rates_table_on_hive_task >> forex_processing_with_spark >> sending_email_task
+    creating_forex_rates_table_on_hive_task >> forex_processing_with_spark >> [send_email_task,
+                                                                               send_slack_notification_task]
 
 # DAG Flow:
 #
@@ -136,6 +156,7 @@ with DAG(
 # | create_or_verify_file_conn_task        |
 # | create_or_verify_hive_conn_task        |
 # | create_or_verify_spark_conn_task       |
+# | create_or_verify_slack_conn_task       |
 # +----------------------------------------+
 #                     |
 #                     v
@@ -161,6 +182,16 @@ with DAG(
 #                     v
 # +----------------------------------------+
 # | creating_forex_rates_table_on_hive_task|
+# +----------------------------------------+
+#                     |
+#                     v
+# +----------------------------------------+
+# | forex_processing_with_spark            |
+# +----------------------------------------+
+#                     |
+#                     v
+# +----------------------------------------+
+# | forex_processing_with_spark            |
 # +----------------------------------------+
 #                     |
 #                     v
