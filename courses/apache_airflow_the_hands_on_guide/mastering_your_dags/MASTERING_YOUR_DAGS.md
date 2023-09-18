@@ -172,7 +172,7 @@ with DAG(dag_id='my_dag', default_args=default_args) as dag:
 
 ### **8.1 Example for `depends_on_past`**
 
-Consider a DAG with tasks A >> B >> C.
+Consider a DAG with tasks A >> B (depends_on_past=True) >> C.
 
 1. **Run 1**: All tasks succeed (A >> B >> C).
 2. **Run 2**: A succeeds, B fails, C is skipped.
@@ -180,7 +180,7 @@ Consider a DAG with tasks A >> B >> C.
 
 ### **8.2 Example for `wait_for_downstream`**
 
-For a task with `wait_for_downstream=True` and a DAG with tasks A >> B >> C.
+For A task with `wait_for_downstream=True` and a DAG with tasks A (wait_for_downstream=True) >> B >> C.
 
 1. **Run 1**: All tasks succeed (A >> B >> C).
 2. **Run 2**: A succeeds, B fails, C is skipped.
