@@ -1,4 +1,4 @@
-# Mastering Your Dags
+# Mastering Your DAGs
 
 ---
 
@@ -8,6 +8,8 @@
 - [4. Common Scheduling Presets](#4-common-scheduling-presets)
 - [5. Backfill and Catchup](#5-backfill-and-catchup)
 - [6. Dealing with Timezones in Airflow](#6-dealing-with-timezones-in-airflow)
+- [7. How to make your tasks dependent](#7-how-to-make-your-tasks-dependent)
+- [8. Visual Examples](#8-visual-examples)
 
 ---
 
@@ -126,13 +128,13 @@ default_args = {
 
 with DAG(dag_id='my_dag', default_args=default_args) as dag:
     ...
-```
+ ```
 
 ### **6.4 Cron Schedules**
 
 * Airflow assumes you will always want to run at the exact same time and will ignore the DST (Daylight Saving Time). For
   example, `schedule_interval= 0 5 * * *` will always trigger your DAG at `5 PM GMT +1` every day **regardless if DST is
-  in place**.
+  in effect**.
 
 ### **6.5 Timedelta**
 
@@ -151,3 +153,36 @@ with DAG(dag_id='my_dag', default_args=default_args) as dag:
 * **Note**: For cron expressions, when DST happens 2AM => 3AM, the scheduler thinks the DAGRun of the 31 of March has
   been skipped and since Catchup=False, it won't get executed. The next DagRun will be the 1st of April at 2AM.
 
+## **7. How to make your tasks dependent**
+
+### **7.1 depends_on_past**
+
+* Defined at **task level**.
+* If the **previous task instance** failed, the current task is not executed.
+* Consequently, the current task has **no status**.
+* First task instance with `start_date` allowed to run.
+
+### **7.2 wait_for_downstream**
+
+* Defined at **task level**.
+* An instance of task X will wait for **tasks** `immediately` **downstream** of the **previous instance** of task X to
+  finish **successfully** before it runs.
+
+## **8. Visual Examples**
+
+### **8.1 Example for `depends_on_past`**
+
+Consider a DAG with tasks A >> B >> C.
+
+1. **Run 1**: All tasks succeed (A >> B >> C).
+2. **Run 2**: A succeeds, B fails, C is skipped.
+3. **Run 3**: A succeeds but B waits because it depends on its past instance (which had failed in Run 2).
+
+### **8.2 Example for `wait_for_downstream`**
+
+For a task with `wait_for_downstream=True` and a DAG with tasks A >> B >> C.
+
+1. **Run 1**: All tasks succeed (A >> B >> C).
+2. **Run 2**: A succeeds, B fails, C is skipped.
+3. **Run 3**: None of the tasks start because Task A from Run 2 is waiting for B and C from Run 2 to complete
+   successfully.
