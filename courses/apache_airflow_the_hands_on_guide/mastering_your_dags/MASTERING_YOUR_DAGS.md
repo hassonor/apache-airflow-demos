@@ -58,3 +58,21 @@
 | @monthly | Executes at midnight on the first day of the month.            | 0 0 1 * *       |
 | @yearly  | Executes at midnight on the first day of the year (January 1). | 0 0 1 1 *       |
 
+# Backfill and Catchup
+
+___
+
+## DagRun
+
+* The scheduler creates a `DagRun` object
+* Describes and instance of a given `DAG` in time
+* Contains tasks to execute.
+* **Atomic, Idempotent**
+
+## How to turn on/off Catchup?
+
+Either By:
+
+* Setting the parameter `catchup` in the DAG definition to `True` of `False`
+* Changing the parameter `catchup_by_default` in `airflow.cfg`
+* By default, `catchup_by_default=True`
