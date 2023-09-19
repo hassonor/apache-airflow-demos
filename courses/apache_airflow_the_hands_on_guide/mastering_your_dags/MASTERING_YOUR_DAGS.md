@@ -10,6 +10,9 @@
 - [6. Dealing with Timezones in Airflow](#6-dealing-with-timezones-in-airflow)
 - [7. How to make your tasks dependent](#7-how-to-make-your-tasks-dependent)
 - [8. Visual Examples](#8-visual-examples)
+- [9. How to Structure your DAG folder](#9-how-to-structure-your-dag-folder)
+- [10. Dag Failure Detections](#10-dag-failure-detections)
+- [11. Task Failure Detections](#11-task-failure-detections)
 
 ---
 
@@ -186,3 +189,54 @@ For A task with `wait_for_downstream=True` and a DAG with tasks A (wait_for_down
 2. **Run 2**: A succeeds, B fails, C is skipped.
 3. **Run 3**: None of the tasks start because Task A from Run 2 is waiting for B and C from Run 2 to complete
    successfully.
+
+## **9. How to Structure your DAG folder**
+
+___
+
+### **9.1** `.airflowignore`
+
+___
+
+* Specifies the directories or files in the DAGs folder that Airflow should ignore.
+* Equivalent to the `.gitignore` file.
+* Each line corresponds to a regular expression pattern.
+* The scope of a `.airflowignore` is the current directory as well as its sub-folders.
+* Airflow looks for "Dag" or "airflow" in files. **You can avoid wasting scans by using the .airflowignore** file in
+  your Dags folder.
+
+## 10. Dag Failure Detections
+
+Detection strategies for DAGs include:
+
+### Dag Level
+
+- `dagrun_timeout`
+- `sla_miss_callback`
+- `on_failure_callback`
+- `on_success_callback`
+
+### `max_active_runs`
+
+- If `max_active_runs` isn't set, Airflow uses `max_active_runs_per_dag` in `airflow.cfg`.
+
+---
+
+## 11. Task Failure Detections
+
+Detection strategies for tasks include:
+
+### Task Level
+
+- `email`
+- `email_on_failure`
+- `email_on_retry`
+- `retries`
+- `retry_delay`
+- `retry_exponential_backoff`
+- `max_retry_delay`
+- `execution_timeout`
+- `on_failure_callback`
+- `on_success_callback`
+- `on_retry_callback`
+
