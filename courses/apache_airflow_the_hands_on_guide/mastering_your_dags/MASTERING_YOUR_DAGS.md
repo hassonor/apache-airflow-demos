@@ -13,6 +13,7 @@
 - [9. How to Structure your DAG folder](#9-how-to-structure-your-dag-folder)
 - [10. Dag Failure Detections](#10-dag-failure-detections)
 - [11. Task Failure Detections](#11-task-failure-detections)
+- [12. How to test a DAG?](#12-how-to-test-a-dag)
 
 ---
 
@@ -240,3 +241,46 @@ Detection strategies for tasks include:
 - `on_success_callback`
 - `on_retry_callback`
 
+## 12. How to test a DAG?
+
+___
+Five categories:
+
+* DAG Validation Tests
+* DAG/Pipeline Definition Tests
+* Unit Tests
+* Integration Tests
+* End to End Pipeline Tests
+
+### 12.1 DAG Validation Tests
+
+Common tests for all DAGs in Airflow
+
+* Check if valid
+* Check if there is no cycles
+* Check default arguments
+* High level of testing of DAGs
+
+### 12.2 DAG/Pipeline Definition Tests
+
+Test if modifications are intentional
+
+* Check total number of tasks
+* Check the nature of tasks
+* Check the upstream and downstream dependencies of tasks
+
+### 12.3 Command Line Interfaces
+
+___
+Some useful commands:
+
+* `airflow run`
+    * Run a single task instance
+* `airflow list_dags`
+    * List all the DAGs
+* `airflow dag_state`
+    * Get the status of a DAG run
+* `airflow task_state`
+    * Get the status of a Task instance
+* `airflow test`
+    * Test a task instance without checking for dependencies or recording its state in the db
