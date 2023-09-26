@@ -8,7 +8,7 @@ default_args = {
 
 
 @dag(
-    dag_id='passing_data_with_tasks',
+    dag_id='passing_data_with_taskflow_api',
     description='XCom using the TaskFlow API',
     default_args=default_args,
     start_date=days_ago(1),
@@ -28,16 +28,8 @@ def passing_data_with_taskflow_api():
 
         return order_price_data
 
-    @task
-    def compute_sum(order_price_data):
-        total = 0
-        for order in order_price_data:
-            total += order_price_data[order]
-
-        return total
-
-    @task
-    def compute_average(order_price_data):
+    @task(multiple_outputs=True)
+    def compute_total_and_average(order_price_data):
         total = 0
         count = 0
         for order in order_price_data:
@@ -46,7 +38,7 @@ def passing_data_with_taskflow_api():
 
         average = total / count
 
-        return average
+        return {'total_price': total, 'average_price': average}
 
     @task
     def display_result(total, average):
@@ -55,10 +47,9 @@ def passing_data_with_taskflow_api():
 
     order_price_data = get_order_prices()
 
-    total = compute_sum(order_price_data)
-    average = compute_average(order_price_data)
+    total_and_average_dict = compute_total_and_average(order_price_data)
 
-    display_result(total, average)
+    display_result(total_and_average_dict['total_price'], total_and_average_dict['average_price'])
 
 
 passing_data_with_taskflow_api()
