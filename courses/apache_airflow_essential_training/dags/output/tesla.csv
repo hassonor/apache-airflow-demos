@@ -1,0 +1,14 @@
+Brand,Model,AccelSec,TopSpeed_KmH,Range_Km,Efficiency_WhKm,FastCharge_KmH,RapidCharge,PowerTrain,PlugType,BodyStyle,Segment,Seats,PriceEuro
+Tesla ,Model 3 Long Range Dual Motor,4.6,233,450,161,940,Yes,AWD,Type 2 CCS,Sedan,D,5,55480
+Tesla ,Model 3 Standard Range Plus,5.6,225,310,153,650,Yes,RWD,Type 2 CCS,Sedan,D,5,46380
+Tesla ,Model Y Long Range Dual Motor,5.1,217,425,171,930,Yes,AWD,Type 2 CCS,SUV,D,7,58620
+Tesla ,Model 3 Long Range Performance,3.4,261,435,167,910,Yes,AWD,Type 2 CCS,Sedan,D,5,61480
+Tesla ,Cybertruck Tri Motor,3.0,210,750,267,710,Yes,AWD,Type 2 CCS,Pickup,N,6,75000
+Tesla ,Model S Long Range,3.8,250,515,184,560,Yes,AWD,Type 2,Liftback,F,5,79990
+Tesla ,Roadster ,2.1,410,970,206,920,Yes,AWD,Type 2 CCS,Cabrio,S,4,215000
+Tesla ,Model X Long Range,4.6,250,450,211,490,Yes,AWD,Type 2,SUV,F,7,85990
+Tesla ,Model S Performance,2.5,261,505,188,550,Yes,AWD,Type 2,Liftback,F,5,96990
+Tesla ,Model Y Long Range Performance,3.7,241,410,177,900,Yes,AWD,Type 2 CCS,SUV,D,7,65620
+Tesla ,Cybertruck Dual Motor,5.0,190,460,261,710,Yes,AWD,Type 2 CCS,Pickup,N,6,55000
+Tesla ,Model X Performance,2.8,250,440,216,480,Yes,AWD,Type 2,SUV,F,7,102990
+Tesla ,Cybertruck Single Motor,7.0,180,390,256,740,Yes,RWD,Type 2 CCS,Pickup,N,6,45000

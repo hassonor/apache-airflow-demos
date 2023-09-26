@@ -1,0 +1,38 @@
+Brand,Model,AccelSec,TopSpeed_KmH,Range_Km,Efficiency_WhKm,FastCharge_KmH,RapidCharge,PowerTrain,PlugType,BodyStyle,Segment,Seats,PriceEuro
+Volkswagen ,e-Golf ,9.6,150,190,168,220,Yes,FWD,Type 2 CCS,Hatchback,C,5,31900
+Peugeot ,e-208 ,8.1,150,275,164,420,Yes,FWD,Type 2 CCS,Hatchback,B,5,29682
+Nissan ,Leaf ,7.9,144,220,164,230,Yes,FWD,Type 2 CHAdeMO,Hatchback,C,5,29234
+Hyundai ,Kona Electric 64 kWh,7.9,167,400,160,380,Yes,FWD,Type 2 CCS,SUV,B,5,40795
+Hyundai ,IONIQ Electric,9.7,165,250,153,210,Yes,FWD,Type 2 CCS,Liftback,C,5,34459
+Volkswagen ,e-Up! ,11.9,130,195,166,170,Yes,FWD,Type 2 CCS,Hatchback,A,4,21421
+MG ,ZS EV,8.2,140,220,193,260,Yes,FWD,Type 2 CCS,SUV,B,5,30000
+Mini ,Cooper SE ,7.3,150,185,156,260,Yes,FWD,Type 2 CCS,Hatchback,B,4,31681
+Opel ,Corsa-e ,8.1,150,275,164,420,Yes,FWD,Type 2 CCS,Hatchback,B,5,29146
+Peugeot ,e-2008 SUV ,8.5,150,250,180,380,Yes,FWD,Type 2 CCS,SUV,B,5,34361
+Kia ,e-Niro 64 kWh,7.8,167,370,173,350,Yes,FWD,Type 2 CCS,SUV,C,5,38105
+Renault ,Zoe ZE50 R110,11.4,135,315,165,230,Yes,FWD,Type 2 CCS,Hatchback,B,5,31184
+Mazda ,MX-30 ,9.0,150,180,178,240,Yes,FWD,Type 2 CCS,SUV,C,5,32646
+Nissan ,Leaf e+,7.3,157,325,172,390,Yes,FWD,Type 2 CHAdeMO,Hatchback,C,5,37237
+Lexus ,UX 300e,7.5,160,270,193,190,Yes,FWD,Type 2 CHAdeMO,SUV,C,5,50000
+Renault ,Zoe ZE50 R135,9.5,140,310,168,230,Yes,FWD,Type 2 CCS,Hatchback,B,5,33133
+Hyundai ,Kona Electric 39 kWh,9.9,155,255,154,210,Yes,FWD,Type 2 CCS,SUV,B,5,33971
+Skoda ,CITIGOe iV ,12.3,130,195,166,170,Yes,FWD,Type 2 CCS,Hatchback,A,4,24534
+SEAT ,Mii Electric ,12.3,130,195,166,170,Yes,FWD,Type 2 CCS,Hatchback,A,4,20129
+Kia ,e-Soul 64 kWh,7.9,167,365,175,340,Yes,FWD,Type 2 CCS,SUV,B,5,36837
+Opel ,Ampera-e ,7.3,150,335,173,210,Yes,FWD,Type 2 CCS,MPV,B,5,41906
+Aiways ,U5 ,9.0,150,335,188,350,Yes,FWD,Type 2 CCS,SUV,C,5,36057
+Opel ,Mokka-e ,8.5,150,255,176,390,Yes,FWD,Type 2 CCS,SUV,B,5,35000
+DS ,3 Crossback E-Tense,8.7,150,250,180,380,Yes,FWD,Type 2 CCS,SUV,B,5,37422
+Citroen ,e-C4 ,9.7,150,250,180,380,Yes,FWD,Type 2 CCS,SUV,C,5,40000
+Renault ,Zoe ZE40 R110,11.4,135,255,161,230,Yes,FWD,Type 2 CCS,Hatchback,B,5,29234
+Nissan ,Ariya 87kWh,7.6,160,440,198,520,Yes,FWD,Type 2 CCS,Hatchback,C,5,50000
+Nissan ,e-NV200 Evalia ,14.0,123,190,200,190,Yes,FWD,Type 1 CHAdeMO,SPV,N,7,33246
+Renault ,Kangoo Maxi ZE 33,22.4,130,160,194,-,No,FWD,Type 2,SPV,N,5,38000
+Sono ,Sion ,9.0,140,225,156,270,Yes,FWD,Type 2 CCS,Hatchback,C,5,25500
+Kia ,e-Niro 39 kWh,9.8,155,235,167,230,Yes,FWD,Type 2 CCS,SUV,C,5,34400
+Mercedes ,EQV 300 Long,10.0,140,330,273,290,Yes,FWD,Type 2 CCS,SPV,N,7,70631
+Fiat ,500e Hatchback,9.0,150,250,168,330,Yes,FWD,Type 2 CCS,Hatchback,B,4,34900
+Kia ,e-Soul 64 kWh,7.9,167,365,175,320,Yes,FWD,Type 2 CCS,SUV,B,5,36837
+Fiat ,500e Convertible,9.0,150,250,168,330,Yes,FWD,Type 2 CCS,Cabrio,B,4,37900
+Kia ,e-Soul 39 kWh,9.9,157,230,170,220,Yes,FWD,Type 2 CCS,SUV,B,5,33133
+Nissan ,Ariya 63kWh,7.5,160,330,191,440,Yes,FWD,Type 2 CCS,Hatchback,C,5,45000
